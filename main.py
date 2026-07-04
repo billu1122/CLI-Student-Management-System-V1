@@ -8,7 +8,8 @@ while True:
     print("2. Edit Student Info")
     print("3. Delete Student Info")
     print("4. View Student Info")
-    print("5. Exit Program")
+    print("5. Review Students Info")
+    print("6. Exit Program")
 
     try:
        choice = int(input("Select an option: "))
@@ -30,6 +31,9 @@ while True:
         view_data_logic()
 
     elif choice == 5:
+        review_whole_logic()
+
+    elif choice == 6:
         print("Exiting program. Goodbye!")
         sys.exit()
 

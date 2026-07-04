@@ -63,3 +63,10 @@ def edit_data_logic():
 
     else:
         edit_individual_data(students_list)
+
+def review_whole_logic():
+    if not students_list:
+        print("You have no Student data!")
+    
+    else:
+        review_whole_class(students_list)

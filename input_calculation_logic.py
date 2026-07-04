@@ -1,5 +1,6 @@
 unique_user_id=1
 students_list={}
+subjects = ["Physics", "Chemistry", "Maths", "Computer Science", "English"]
 
 def calculation_logic(marks):
     total_marks = sum(marks)
@@ -36,14 +37,14 @@ def student_enter_data(students,students_list,my_room):
 
         while True:
             try:
-                student_roll_no=int(input(f"Enter Roll no. of student {student_name} : "))
+                student_roll_no=int(input(f"Enter Roll no. of student {student_name}: "))
                 break
             except ValueError:
                     print("invalid Input! Please enter valid Roll no.")
                     continue
         while True:
             try:
-                student_admit_no=int(input(f"Enter Admission no. of student {student_name} :"))
+                student_admit_no=int(input(f"Enter Admission no. of student {student_name}:"))
                 string_admit_no=str(student_admit_no)
                 unique_user_id="user_"+string_admit_no
 
@@ -55,11 +56,11 @@ def student_enter_data(students,students_list,my_room):
             except ValueError:
                  print("invalid Input! Please enter valid Admission nol no.")
                  continue
-             
+
 
         final_marks, final_percentage,_, mark=marks_calculator_logic(student_name)
 
-        
+
         student_data = {
         "Name": student_name,
         "Admission no.": student_admit_no,
@@ -89,6 +90,18 @@ def user_choice_logic():
             print("Invalid Input! Please enter valid choice.")
 
 
+def individual_data(unique_user_id, students_list):
+    if unique_user_id in students_list:
+        individual_data = students_list.get(unique_user_id)
+        print(f"\n--- The data of student {individual_data.get('Name')} is below ---")
+        for key, value in individual_data.items():
+            print(f"{key}:{value}")
+        return unique_user_id
+    else:
+        print(f"Student with ID '{unique_user_id}' does not exist.")
+        return None
+
+
 def view_individual_data(students_list, purpose="view"):
     while True:
         try:
@@ -100,16 +113,7 @@ def view_individual_data(students_list, purpose="view"):
                 
             unique_user_id = "user_" + student_admit_no
 
-            if unique_user_id in students_list:
-                individual_data = students_list.get(unique_user_id)
-                print(f"\n--- The data of student {individual_data.get('Name')} is below ---")   
-                
-                for key, value in individual_data.items():
-                    print(f"{key}:{value}")
-                return unique_user_id
-            else:
-                print(f"Student with Admission no. '{student_admit_no}' does not exist in database.")
-                continue            
+            individual_data(unique_user_id, students_list)          
         except Exception as e:
             print("Something went wrong! Please enter a valid Admission no.")
 
@@ -124,10 +128,10 @@ def view_whole_data(students_list):
 
 def delete_Whole_data(students_list):
     view_whole_data(students_list)
-    print("-" * 50)
+    print("=" * 50)
     print("WARNING: You are about to DELETE ALL STUDENT DATA.")
     print("This action is permanent and cannot be undone.")
-    print("-" * 50)
+    print("=" * 50)
     while True:
         confirmation=input("WARNING: Are you sure you want to proceed? Type 'DELETE' to confirm all data erasure, or type 'EXIT' to cancel: ")
         if confirmation=="DELETE":
@@ -142,18 +146,21 @@ def delete_Whole_data(students_list):
             continue
 
 
-def delete_individual_data(students_list):
-    unique_user_id = view_individual_data(students_list, "Delete")
+def delete_individual_data(students_list, explicit_id=None):
+    if explicit_id:
+        unique_user_id = explicit_id
+    else:
+        unique_user_id = view_individual_data(students_list, "Delete")
 
     if unique_user_id is None:
         return
 
     student_name = students_list[unique_user_id].get('Name', 'Student')
 
-    print("-" * 50)
+    print("=" * 50)
     print(f"WARNING: You are about to DELETE student.")
     print("This action is permanent and cannot be undone.")
-    print("-" * 50)
+    print("=" * 50)
     while True:
         confirmation=input(f"WARNING: Are you sure you want to proceed? Type 'DELETE' to confirm  data erasure of student {student_name}, or type 'EXIT' to cancel: ")
         if confirmation=="DELETE":
@@ -168,10 +175,11 @@ def delete_individual_data(students_list):
             continue
 
 
-def edit_individual_data(students_list,subjects = ["Physics", "Chemistry", "Maths", "Computer Science", "English"]):
-    unique_user_id= view_individual_data(students_list, "Edit")
-
-
+def edit_individual_data(students_list, explicit_id=None):
+    if explicit_id:
+        unique_user_id = explicit_id
+    else:
+        unique_user_id = view_individual_data(students_list, "Edit")
 
     if unique_user_id is None:
         return
@@ -205,7 +213,7 @@ def edit_individual_data(students_list,subjects = ["Physics", "Chemistry", "Math
             print("- Computer Science")
             print("- English")
 
-            edit_subject=input(f"Enter the subject name exactly as shown to edit profile of {student_name:}").strip().capitalize()
+            edit_subject=input(f"Enter the subject name exactly as shown to edit profile of {student_name}: ").strip().capitalize()
 
             for subject in subjects:
             
@@ -239,3 +247,48 @@ def edit_individual_data(students_list,subjects = ["Physics", "Chemistry", "Math
 
         else:
             print("Invalid Input! Please enter correct choice (Make sure capatilization and spelling is same as menu)")
+
+
+def review_whole_class(students_list):
+    student_no=1
+    for user_id in students_list:
+        print("="*50)
+        print(f"Student {student_no}/{len(students_list)}")
+        print(""*50)
+        individual_data(user_id, students_list)
+        student_no+=1
+
+        while True:
+            print("1. Next")
+            print("2. Edit")
+            print("3. Delete")
+            print("4. Exit")
+
+            while True:
+                try:
+                    choice=int(input("Select the options: "))
+                    break
+
+                except ValueError:
+                    print("Invalid Input! Please enter valid choice")
+                    continue
+
+            if choice==1:
+                break
+
+            elif choice==2:
+                edit_individual_data(students_list, explicit_id=user_id)
+                print(f"Students {user_id} data updated successfully!")
+                break
+
+            elif choice==3:
+                delete_individual_data(students_list, explicit_id=user_id)
+                print(f"Students {user_id} data Deleted successfully!")
+                continue
+
+            elif choice==4:
+                print("Exited Successfully!")
+                return
+
+            else:
+                print("Invalid Input! Please enter valid Input.")
